@@ -49,7 +49,7 @@
           <OutputName>lora_stc</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\Listings\</ListingPath>
@@ -233,7 +233,7 @@
               <RCB>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0xffff</Size>
               </RCB>
               <RXB>
                 <Type>0</Type>
@@ -401,6 +401,11 @@
               <FileType>1</FileType>
               <FilePath>.\Source\uart.c</FilePath>
             </File>
+            <File>
+              <FileName>L101LORA.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Source\L101LORA.C</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -425,6 +430,16 @@
               <FileName>uart.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\uart.h</FilePath>
+            </File>
+            <File>
+              <FileName>eeprom.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\eeprom.h</FilePath>
+            </File>
+            <File>
+              <FileName>L101LORA.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\L101LORA.h</FilePath>
             </File>
           </Files>
         </Group>

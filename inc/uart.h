@@ -1,29 +1,19 @@
 #ifndef _UART_H_
 #define _UART_H_
 
-#define USARTFLAG	'*'
-#define UENDFLAG	'#'
-
-#define PKG_START_FLAG	0x1E //帧起始标识符
-#define PKG_END_FLAG	0x7F //帧结束标示符
-#define PKG_DLE_FLAG	0x1F //特殊控制符
-
-#define STATE_START_A		0 //等待第一个起始标识符状态
-#define STATE_START_B		1 //等待第二个起始标识符状态
-#define STATE_VAILD_DATA	2 //等待有效数据状态
-#define STATE_END			3 //等待第二个结束标示符状态
-#define STATE_DLE			4 //接收到特殊控制符状态
+#define S2RI  0x01          //S2CON.0
+#define S2TI  0x02          //S2CON.1
+#define S2RB8 0x04          //S2CON.2
+#define S2TB8 0x08          //S2CON.3
 
 
-//extern bit UartSendFlag;
-extern bit UartRecFlag;
-extern bit UPakageRec;
-extern unsigned char tmpUart;
-extern unsigned char buflen;
-extern unsigned char xdata buf[256]; //
+
 void Init_Uart(void);
 void SendChar(unsigned char c);
-void RecUartPak(void);
+
+void Init_Uart2(void);
+void S2SendByte(unsigned char dat);
+void S2SendData(unsigned char *buf, unsigned char len);
 
 
 #endif /*_UART_H_*/
