@@ -8,6 +8,14 @@
 #include "eeprom.h"
 #include "l101lora.h"
 
+#typedef unsigned char 	uint_8
+#typedef unsigned short uint_16
+#typedef unsigned long 	uint_32
+	
+#typedef char 	int_8
+#typedef short 	int_16
+#typedef long 	int_32
+	
 #define FOSC			11059200L
 #define BAUD(X)		  (256 - FOSC/32/X)
 #define BAUD9600	  (256 - FOSC/32/9600)
