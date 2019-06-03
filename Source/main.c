@@ -1,6 +1,6 @@
 #include "type.h"
 
-unsigned char Time0Cnt = 0;//用于定时器0内部计时用
+uint8_t Time0Cnt = 0;//用于定时器0内部计时用
 //bit ComLostFlag = 0;//打开PA后,失去与上位机的通信标志
 void InitMcuPort(void)
 {
@@ -76,7 +76,7 @@ void Time0_ISR(void) interrupt 1
 
 void Delay100ms(void)		//@11.0592MHz
 {
-	unsigned char i, j, k;
+	uint8_t i, j, k;
 
 	i = 5;
 	j = 52;
@@ -92,7 +92,7 @@ void Delay100ms(void)		//@11.0592MHz
 
 void LR30_Reset(void)
 {
-	unsigned char i;
+	uint8_t i;
 	LR30RSTON;
 	for(i=0;i<10;i++)
 		Delay100ms();//1S reset
@@ -100,9 +100,9 @@ void LR30_Reset(void)
 }
 void main(void)
 {
-	unsigned char i;//ItStatus1,ItStatus2;
-	//unsigned char sum,sendcmd;
-	unsigned int  counter;
+	uint8_t i;//ItStatus1,ItStatus2;
+	//uint8_t sum,sendcmd;
+	uint16_t  counter;
 
 	CLK_DIV = 0;//fsys= fxtal
 	InitMcuPort();

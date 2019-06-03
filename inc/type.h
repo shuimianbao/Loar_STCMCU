@@ -7,14 +7,8 @@
 #include "uart.h"
 #include "eeprom.h"
 #include "l101lora.h"
+#include "gloabdef.h"
 
-#typedef unsigned char 	uint_8
-#typedef unsigned short uint_16
-#typedef unsigned long 	uint_32
-	
-#typedef char 	int_8
-#typedef short 	int_16
-#typedef long 	int_32
 	
 #define FOSC			11059200L
 #define BAUD(X)		  (256 - FOSC/32/X)
@@ -51,7 +45,7 @@ sbit LED2     = P4^4;
 //Internal extend 1KBytes RAM enable bit of AUXR
 #define EXTRAM 0X02
 
-#define PAWDTIME (unsigned char)(10000/50)   //定时10S
+#define PAWDTIME (uint8_t)(10000/50)   //定时10S
 
 void Delay100ms(void);
 

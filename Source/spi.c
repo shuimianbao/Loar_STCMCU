@@ -10,7 +10,7 @@ void Init_SPI(void)
 	SPCTL = SSIG | SPEN | MSTR ;        //master mode
 }
 
-void SPI_WriteByte( unsigned char input )
+void SPI_WriteByte( uint8_t input )
 {
 	  SPDAT = input;                //trigger SPI send
     while (!(SPSTAT & SPIF));   //wait send complete
@@ -19,7 +19,7 @@ void SPI_WriteByte( unsigned char input )
   
 }
 
-unsigned char SPI_ReadByte(void)
+uint8_t SPI_ReadByte(void)
 {
 		SPDAT = 0xFF;                //trigger SPI send
     while (!(SPSTAT & SPIF));   //wait send complete
@@ -29,16 +29,16 @@ unsigned char SPI_ReadByte(void)
 
 #else
 
-void Delay(unsigned char i) { while(--i); }
+void Delay(uint8_t i) { while(--i); }
 
 void Init_SPI(void)
 {
 	SPI_CLK=0;
 }
 
-void SPI_WriteByte( unsigned char input )
+void SPI_WriteByte( uint8_t input )
 {
-	unsigned char i=0; 
+	uint8_t i=0; 
 	for (i=0;i<=7;i++) 
 	{
 	 	if (input & 0x80) 
@@ -55,10 +55,10 @@ void SPI_WriteByte( unsigned char input )
   
 }
 
-unsigned char SPI_ReadByte(void)
+uint8_t SPI_ReadByte(void)
 {
-	unsigned char output=0x00;   
-  	unsigned char i=0; 
+	uint8_t output=0x00;   
+  	uint8_t i=0; 
   	bit temp;
   	Delay(10);
   	for(i=0;i<=7;i++)    

@@ -441,6 +441,11 @@
               <FileType>5</FileType>
               <FilePath>.\inc\L101LORA.h</FilePath>
             </File>
+            <File>
+              <FileName>gloabdef.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\gloabdef.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

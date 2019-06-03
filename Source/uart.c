@@ -1,7 +1,10 @@
 #include "type.h"
 
-bit busy;
-uint_8 xdata S2RecBuf[256];
+bit busy = 0;
+bit bS2BufOverflow = 0;
+uint8_t xdata ucS2RecBuf[256];
+uint8_t xdata ucS2RecBufInP = 0;
+uint8_t xdata ucS2RecBufOutP = 0;
 void Init_Uart(void)
 {
 		// 7   6   5   4   3   2   1  0<input type="password" >
@@ -14,10 +17,10 @@ void Init_Uart(void)
     TH1 = TL1 = BAUD(115200);           //9600 bps
     TR1 = 1;
     ES =0;										  //enable UART0 interrupt
-	TI = 1;
+		TI = 1;
 }
 /*
-void SendChar(unsigned char c)
+void SendChar(uint8_t c)
 {
 	
 	//while (!TI);
@@ -63,7 +66,7 @@ Send a byte data to UART
 Input: dat (data to be sent)
 Output:None
 ----------------------------*/
-void S2SendByte(unsigned char dat)
+void S2SendByte(uint8_t dat)
 {
     while (busy);           //Wait for the completion of the previous data is sent
     busy = 1;
@@ -71,29 +74,46 @@ void S2SendByte(unsigned char dat)
 }
 
 
-void S2SendData(unsigned char *buf, unsigned char len)
+void S2SendData(uint8_t *buf, uint8_t len)
 {
-	unsigned char i;
+	uint8_t i;
 	for(i=0;i<len;i++)
 		S2SendByte(buf[i]);
+}
+
+uint8_t S2ReadData(uint8_t *buf)
+{
+	uint8_t len=0;
+	if(bS2BufOverflow) //over flow
+	{
+		//Todo:...
+		printf("S2 Buffer overlfow\r\n");
+	}
+	len = (uint8_t)(((int8_t)ucS2RecBufInP + 256 - (int8_t)ucS2RecBufOutP) % 256);
+	buf = ucS2RecBuf + ucS2RecBufOutP;
+	return len;
+	
 }
 /*----------------------------
 UART2 interrupt service routine
 ----------------------------*/
 void Uart2(void) interrupt 8
 {
-	unsigned char temp;
+	//uint8_t temp;
     if (S2CON & S2RI)
     {
         S2CON &= ~S2RI;     //Clear receive interrupt flag
-        temp = S2BUF;         //P0 show UART data
-		printf("%c",temp);
-		LED1 =~LED1;
+        ucS2RecBuf[ucS2RecBufInP++] = S2BUF;         //put UART data in buf
+				if(ucS2RecBufInP == ucS2RecBufOutP)
+							bS2BufOverflow = 1;	//buf over flow
+				
+				//printf("%c",temp);
+				LED1 =~LED1;
     }
     if (S2CON & S2TI)
     {
         S2CON &= ~S2TI;     //Clear transmit interrupt flag
         busy = 0;           //Clear transmit busy flag
-		LED2 =~LED2;
+				LED2 =~LED2;
     }
 }
