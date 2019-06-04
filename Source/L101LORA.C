@@ -1,6 +1,6 @@
 #include "type.h"
 
-L101_PARA xdata xL101Inst;
+
 
 void L101_Reset(void)
 {
@@ -385,5 +385,91 @@ L101ATSTA L101_SetTxPower(uint8_t ucPa)
 	}
 	
 	return L101_ATResoponSearch("OK",pucRec,ucLenRec);
+}
+
+L101ATSTA InitL101Module(L101_PARA * xInstPara)
+{
+	//L101_PARA xdata xL101Inst;
+	//xL101Inst.eMode = FP;
+	//xL101Inst.eRate = R21875BPS;
+	//xL101Inst.ucCh = 
+	L101ATSTA eRes;
+
+	eRes = L101_EnterATMode();	//enter AT command mode
+	if(eRes != L101_AT_OK)
+	{
+		printf("Enter AT mode Fail [%d]\r\n",eRes);
+		return eRes;
+	}
+
+	eRes = L101_SetEcho(OFF); //turn off command echo function
+	if(eRes != L101_AT_OK)
+	{
+		printf("Off Echo Fail [%d]\r\n",eRes);
+		return eRes;
+	}
+
+	eRes = L101_ReadModuleId(&(xInstPara->ulId)); //read out node ID, this ID can be used for calculation the unique address
+	if(eRes != L101_AT_OK)
+	{
+		printf("Read ID Fail [%d]\r\n",eRes);
+		return eRes;
+	}
+
+	eRes = L101_ReadModuleVer(); //read firmware version
+	if(eRes != L101_AT_OK)
+	{
+		printf("Read Ver Fail [%d]\r\n",eRes);
+		return eRes;
+	}
+
+	eRes = L101_SetWorkMode(xInstPara->eMode); //set wroking mode
+	if(eRes != L101_AT_OK)
+	{
+		printf("set mode Fail [%d]\r\n",eRes);
+		return eRes;
+	}
+	
+	eRes = L101_SetRate(xInstPara->eRate); //set class rate
+	if(eRes != L101_AT_OK)
+	{
+		printf("set rate Fail [%d]\r\n",eRes);
+		return eRes;
+	}
+
+	eRes = L101_SetAddress(xInstPara->usAddr); //set adress
+	if(eRes != L101_AT_OK)
+	{
+		printf("set addr Fail [%d]\r\n",eRes);
+		return eRes;
+	}
+	
+	eRes = L101_SetChannle(xInstPara->ucCh); //set channel
+	if(eRes != L101_AT_OK)
+	{
+		printf("set addr Fail [%d]\r\n",eRes);
+		return eRes;
+	}
+	
+	eRes = L101_SetFec(xInstPara->eFec); //set FEC
+	if(eRes != L101_AT_OK)
+	{
+		printf("set FEC Fail [%d]\r\n",eRes);
+		return eRes;
+	}
+	eRes = L101_SetTxPower(xInstPara->ucPower); //set Tx Power
+	if(eRes != L101_AT_OK)
+	{
+		printf("set Power Fail [%d]\r\n",eRes);
+		return eRes;
+	}
+	
+	eRes = L101_ExitATMode(); //exit AT command mode, begin data transmmit
+	if(eRes != L101_AT_OK)
+	{
+		printf("exit AT mode fail [%d]\r\n",eRes);
+		return eRes;
+	}
+	return L101_AT_OK;
 }
 
