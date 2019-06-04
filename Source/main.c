@@ -74,6 +74,20 @@ void Time0_ISR(void) interrupt 1
 
 
 
+void Delay10ms(void)		//@11.0592MHz
+{
+	unsigned char i, j;
+
+	_nop_();
+	_nop_();
+	i = 108;
+	j = 144;
+	do
+	{
+		while (--j);
+	} while (--i);
+}
+
 void Delay100ms(void)		//@11.0592MHz
 {
 	uint8_t i, j, k;

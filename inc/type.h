@@ -2,6 +2,7 @@
 #define _TYPE_H_
 #include <intrins.h>
 #include <stdio.h>
+#include <string.h>
 #include "stc12c5a60s2.h"
 #include "spi.h"
 #include "uart.h"
@@ -47,6 +48,7 @@ sbit LED2     = P4^4;
 
 #define PAWDTIME (uint8_t)(10000/50)   //¶¨Ê±10S
 
+void Delay10ms(void);
 void Delay100ms(void);
 
 void LR30_Reset(void);
