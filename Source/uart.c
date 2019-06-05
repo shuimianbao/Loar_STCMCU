@@ -96,6 +96,7 @@ uint8_t S2ReadData(uint8_t *buf,uint8_t delay)
 	}
 	len = (uint8_t)(((int8_t)ucS2RecBufInP + 256 - (int8_t)ucS2RecBufOutP) % 256);
 	buf = ucS2RecBuf + ucS2RecBufOutP;
+	ucS2RecBufOutP += len;
 	
 	if(len)
 	{

@@ -104,19 +104,15 @@ void Delay100ms(void)		//@11.0592MHz
 	} while (--i);
 }
 
-void LR30_Reset(void)
-{
-	uint8_t i;
-	LR30RSTON;
-	for(i=0;i<10;i++)
-		Delay100ms();//1S reset
-	LR30RSTOFF;
-}
 void main(void)
 {
 	uint8_t i;//ItStatus1,ItStatus2;
 	//uint8_t sum,sendcmd;
 	uint16_t  counter;
+	L101_PARA xL101Inst;
+	L101ATSTA xRes;
+	uint8_t ucSendTest[100],ucRecTest[100],ucTestlen;
+	uint16_t usIdCrc;
 
 	CLK_DIV = 0;//fsys= fxtal
 	InitMcuPort();
@@ -140,12 +136,39 @@ void main(void)
 	
 	L101_Reset();
 	printf("Loar STC MCU\r\n");
+
+	xL101Inst.eMode = FP;			//定点模式
+	xL101Inst.eRate = R21875BPS;	//定点模式下,速率要一致
+	xL101Inst.ucCh = SELF_CH;				//模块1的信道设置为1
+	xL101Inst.usAddr = SELF_ADDR;			//模块1的地址设置为1
+	xL101Inst.ucPower = 20;			//发射功率为20db
+	xL101Inst.eFec = OFF;			//FEC功能关闭
+
+	xRes = InitL101Module(&xL101Inst);
+	if (xRes != L101_AT_OK)
+	{
+		printf("Init Fail\r\n Reset MCU");
+		IAP_CONTR = 0x20;//reset from application code
+	}
 	
+	usIdCrc = CalculatePacketCrc(xL101Inst.ulId);
+	printf("ID:%x,crc:%x\r\n",xL101Inst.ulId,usIdCrc);
+	
+	counter=0;
 	while(1)
 	{
-		S2SendData("modue2 send\r\n",13);
+		//S2SendData("modue2 send\r\n",13);
+		ucTestlen = sprintf(ucSendTest,"%s send test data \"abcdefghijklmnopqrstuvwxyz\" %d\r\n", MODULETYPE==1?"Master":"Salve", counter++ );
+		
+		L101_SendWithFPMode(ucSendTest,ucTestlen,DEST_CH,DEST_ADDR);
 		for(i=0;i<10;i++)
 			Delay100ms();//1S
+		ucTestlen = L101_Receive(ucRecTest);
+		if(ucTestlen)//had receive data
+		{
+			for(i=0;i<ucTestlen;i++)
+			printf("%c",ucRecTest[i]);
+		}
 			
 	}//end of while(1)
 }

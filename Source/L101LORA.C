@@ -473,3 +473,36 @@ L101ATSTA InitL101Module(L101_PARA * xInstPara)
 	return L101_AT_OK;
 }
 
+L101ATSTA L101_SendWithTransMode(uint8_t *pucSendbuf,uint8_t ucLen)
+{
+	S2SendData(pucSendbuf,ucLen);
+	return L101_AT_OK;
+}
+L101ATSTA L101_SendWithFPMode(uint8_t *pucSendbuf,uint8_t ucLen,uint8_t ucCh, uint16_t usAddr)
+{
+	uint8_t ucTmpbuf[3];
+	ucTmpbuf[0]=(uint8_t)(usAddr>>8);
+	ucTmpbuf[1]=(uint8_t)usAddr;
+	ucTmpbuf[1]=ucCh;
+	S2SendData(ucTmpbuf,3);
+	S2SendData(pucSendbuf,ucLen);
+	return L101_AT_OK;
+}
+
+uint8_t L101_Receive(uint8_t *pucRecbuf)
+{
+	uint8_t ucTmplen = 0;
+
+	ucTmplen = S2ReadData(pucRecbuf, 1);
+	if(ucTmplen)//the uart begin receive data
+	{
+		ucTmplen += S2ReadData(pucRecbuf+ucTmplen, 3);//delay 30ms before read all the data,max data should less than 252
+	}
+
+	return ucTmplen;
+	
+}
+
+
+
+

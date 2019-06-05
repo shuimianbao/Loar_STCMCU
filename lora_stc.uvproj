@@ -406,6 +406,16 @@
               <FileType>1</FileType>
               <FilePath>.\Source\L101LORA.C</FilePath>
             </File>
+            <File>
+              <FileName>crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Source\crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>LR30LORA.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Source\LR30LORA.C</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -445,6 +455,16 @@
               <FileName>gloabdef.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\gloabdef.h</FilePath>
+            </File>
+            <File>
+              <FileName>crc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\crc.h</FilePath>
+            </File>
+            <File>
+              <FileName>LR30LORA.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\LR30LORA.h</FilePath>
             </File>
           </Files>
         </Group>
