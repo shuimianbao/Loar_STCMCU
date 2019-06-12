@@ -8,7 +8,7 @@
 #define S2RB8 0x04          //S2CON.2
 #define S2TB8 0x08          //S2CON.3
 
-
+#define S2RECBUFLEN			256
 void Init_Uart(void);
 void SendChar(unsigned char c);
 

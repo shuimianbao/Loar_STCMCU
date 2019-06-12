@@ -65,6 +65,7 @@ typedef struct {
 void L101_Reset(void);
 void L101_Reload(void);
 L101ATSTA L101_ATResoponSearch(const uint8_t *pucStr, uint8_t *pucBuf, uint8_t ucBuflen);
+L101ATSTA L101_ReadWelcome(void);
 L101ATSTA L101_EnterATMode(void);
 L101ATSTA L101_ExitATMode(void);
 L101ATSTA L101_ReadModuleId(uint32_t *ulId);

@@ -2,6 +2,18 @@
 
 uint8_t Time0Cnt = 0;//用于定时器0内部计时用
 //bit ComLostFlag = 0;//打开PA后,失去与上位机的通信标志
+
+//extern uint8_t idata ucS2RecBufOutP;
+//extern uint8_t idata ucS2RecBufInP;
+/*
+extern bit busy;
+extern bit s1busy;
+extern bit s1recflag;
+extern bit s2recflag;
+extern uint8_t idata s1rec;
+extern uint8_t idata s2rec;
+*/
+
 void InitMcuPort(void)
 {
 // P1.7     P1.6     P1.5     P1.4     P1.3     P1.2     P1.1     P1.0
@@ -135,7 +147,34 @@ void main(void)
 	for(counter=0;counter<0xffff;counter++);
 	
 	L101_Reset();
+/*	
+	while(1)
+	{
+		if(s1recflag)//send to s2
+		{
+			if(busy==0)
+			{
+				S2BUF = s1rec;
+				busy = 1;
+				s1recflag = 0;
+			}
+		}
+
+		if(s2recflag) //send to s1
+		{
+			if(s1busy==0)
+			{
+				SBUF = s2rec;
+				s1busy = 1;
+				s2recflag = 0;
+			}
+		}
+	}
+*/
 	printf("Loar STC MCU\r\n");
+
+	
+	//printf("init: %bx,%bx\r\n",ucS2RecBufInP,ucS2RecBufOutP);
 
 	xL101Inst.eMode = FP;			//定点模式
 	xL101Inst.eRate = R21875BPS;	//定点模式下,速率要一致
@@ -148,7 +187,8 @@ void main(void)
 	if (xRes != L101_AT_OK)
 	{
 		printf("Init Fail\r\n Reset MCU");
-		IAP_CONTR = 0x20;//reset from application code
+		while(1);
+		//IAP_CONTR = 0x20;//reset from application code
 	}
 	
 	usIdCrc = CalculatePacketCrc(xL101Inst.ulId);
@@ -158,7 +198,7 @@ void main(void)
 	while(1)
 	{
 		//S2SendData("modue2 send\r\n",13);
-		ucTestlen = sprintf(ucSendTest,"%s send test data \"abcdefghijklmnopqrstuvwxyz\" %d\r\n", MODULETYPE==1?"Master":"Salve", counter++ );
+		ucTestlen = sprintf(ucSendTest,"%s send test data \"abcdefghijklmnopqrstuvwxyz\" %u\r\n", MODULETYPE==1?"Master":"Salve", counter++ );
 		
 		L101_SendWithFPMode(ucSendTest,ucTestlen,DEST_CH,DEST_ADDR);
 		for(i=0;i<10;i++)

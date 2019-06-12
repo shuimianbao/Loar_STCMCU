@@ -1,6 +1,7 @@
 #include "type.h"
 
 
+extern uint8_t xdata ucS2RecBuf[S2RECBUFLEN];
 
 void L101_Reset(void)
 {
@@ -28,7 +29,10 @@ L101ATSTA L101_ATResoponSearch(const uint8_t *pucStr, uint8_t *pucBuf, uint8_t u
 		return L101_AT_E6;
 
 	
+
+	printf("1");
 	pucIndex = strstr(pucBuf,pucStr);
+	printf("2");
 	if((pucIndex+ucStrlen) <= (pucBuf+ucBuflen))
 	{
 		pucBuf = pucIndex;
@@ -63,7 +67,8 @@ L101ATSTA L101_EnterATMode(void)
 
 	if(!trycnt)//error
 	{
-		printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		//printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		printf("S2 E1\r\n");
 		return L101_AT_E6;
 	}
 		
@@ -73,7 +78,7 @@ L101ATSTA L101_EnterATMode(void)
 	}
 	else
 	{
-		printf("%s %s,S2 respone error\r\n",__FILE__,__LINE__);
+		printf("S2 E2\r\n");
 		return L101_AT_E6;
 	}
 
@@ -85,7 +90,7 @@ L101ATSTA L101_EnterATMode(void)
 
 	if(!trycnt)//error
 	{
-		printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		printf("S2 E3\r\n");
 		return L101_AT_E6;
 	}
 
@@ -114,7 +119,7 @@ L101ATSTA L101_ExitATMode(void)
 
 	if(!trycnt)//error
 	{
-		printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		printf("S2 E4\r\n");
 		return L101_AT_E6;
 	}
 /*
@@ -145,7 +150,7 @@ L101ATSTA L101_SetEcho(ENABLE en)
 
 	if(!trycnt)//error
 	{
-		printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		printf("S2 E5\r\n");
 		return L101_AT_E6;
 	}
 
@@ -175,14 +180,14 @@ L101ATSTA L101_ReadModuleId(uint32_t *ulId)
 
 	if(!trycnt)//error
 	{
-		printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		printf("S2 E6\r\n");
 		return L101_AT_E6;
 	}
 
 	if(L101_AT_OK == L101_ATResoponSearch("+NID:",pucRec,ucLenRec))
 	{
-		sscanf(pucRec,"+NID:%x\r\nOK",ulId);
-		printf("UID:%x\r\n",*ulId);
+		sscanf(pucRec,"+NID:%lx\r\nOK",ulId);
+		printf("UID:%lx\r\n",*ulId);
 		return L101_AT_OK;
 	}
 	else
@@ -207,7 +212,7 @@ L101ATSTA L101_ReadModuleVer(void)
 
 	if(!trycnt)//error
 	{
-		printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		printf("S2 E7\r\n");
 		return L101_AT_E6;
 	}
 
@@ -241,7 +246,7 @@ L101ATSTA L101_SetWorkMode(L101_WROKMODE eMode)
 
 	if(!trycnt)//error
 	{
-		printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		printf("S2 E8\r\n");
 		return L101_AT_E6;
 	}
 	
@@ -268,7 +273,7 @@ L101ATSTA L101_SetRate(L101_RATE eRate)
 
 	if(!trycnt)//error
 	{
-		printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		printf("S2 E9\r\n");
 		return L101_AT_E6;
 	}
 	
@@ -296,7 +301,7 @@ L101ATSTA L101_SetAddress(uint16_t usAddr)
 
 	if(!trycnt)//error
 	{
-		printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		printf("S2 E10\r\n");
 		return L101_AT_E6;
 	}
 	
@@ -324,7 +329,7 @@ L101ATSTA L101_SetChannle(uint8_t ucCh)
 
 	if(!trycnt)//error
 	{
-		printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		printf("S2 E11\r\n");
 		return L101_AT_E6;
 	}
 	
@@ -352,7 +357,7 @@ L101ATSTA L101_SetFec(ENABLE eEn)
 
 	if(!trycnt)//error
 	{
-		printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		printf("S2 E12\r\n");
 		return L101_AT_E6;
 	}
 	
@@ -380,11 +385,31 @@ L101ATSTA L101_SetTxPower(uint8_t ucPa)
 
 	if(!trycnt)//error
 	{
-		printf("%s %s,S2 no data Rec\r\n",__FILE__,__LINE__);
+		printf("S2 E13\r\n");
 		return L101_AT_E6;
 	}
 	
 	return L101_ATResoponSearch("OK",pucRec,ucLenRec);
+}
+L101ATSTA L101_ReadWelcome(void)
+{
+	uint8_t *pucRec;
+	uint8_t ucLenRec;
+	uint8_t trycnt=MAXTRY;
+		
+	do{
+		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY*5);//delay 10ms before read
+		if(ucLenRec)
+			break;
+	}while(--trycnt);
+
+	if(!trycnt)//error
+	{
+		printf("S2 E14\r\n");
+		return L101_AT_E6;
+	}
+
+	return L101_ATResoponSearch("LoRa Start!",pucRec,ucLenRec);
 }
 
 L101ATSTA InitL101Module(L101_PARA * xInstPara)
@@ -395,79 +420,86 @@ L101ATSTA InitL101Module(L101_PARA * xInstPara)
 	//xL101Inst.ucCh = 
 	L101ATSTA eRes;
 
+	eRes = L101_ReadWelcome(); //read the welcome word
+	if(eRes != L101_AT_OK)
+	{
+		printf("Read welcome fail [%bu]\r\n",eRes);
+		return eRes;
+	}
+	
 	eRes = L101_EnterATMode();	//enter AT command mode
 	if(eRes != L101_AT_OK)
 	{
-		printf("Enter AT mode Fail [%d]\r\n",eRes);
+		printf("Enter AT mode Fail [%bu]\r\n",eRes);
 		return eRes;
 	}
 
 	eRes = L101_SetEcho(OFF); //turn off command echo function
 	if(eRes != L101_AT_OK)
 	{
-		printf("Off Echo Fail [%d]\r\n",eRes);
+		printf("Off Echo Fail [%bu]\r\n",eRes);
 		return eRes;
 	}
 
 	eRes = L101_ReadModuleId(&(xInstPara->ulId)); //read out node ID, this ID can be used for calculation the unique address
 	if(eRes != L101_AT_OK)
 	{
-		printf("Read ID Fail [%d]\r\n",eRes);
+		printf("Read ID Fail [%bu]\r\n",eRes);
 		return eRes;
 	}
 
 	eRes = L101_ReadModuleVer(); //read firmware version
 	if(eRes != L101_AT_OK)
 	{
-		printf("Read Ver Fail [%d]\r\n",eRes);
+		printf("Read Ver Fail [%bu]\r\n",eRes);
 		return eRes;
 	}
 
 	eRes = L101_SetWorkMode(xInstPara->eMode); //set wroking mode
 	if(eRes != L101_AT_OK)
 	{
-		printf("set mode Fail [%d]\r\n",eRes);
+		printf("set mode Fail [%bu]\r\n",eRes);
 		return eRes;
 	}
 	
 	eRes = L101_SetRate(xInstPara->eRate); //set class rate
 	if(eRes != L101_AT_OK)
 	{
-		printf("set rate Fail [%d]\r\n",eRes);
+		printf("set rate Fail [%bu]\r\n",eRes);
 		return eRes;
 	}
 
 	eRes = L101_SetAddress(xInstPara->usAddr); //set adress
 	if(eRes != L101_AT_OK)
 	{
-		printf("set addr Fail [%d]\r\n",eRes);
+		printf("set addr Fail [%bu]\r\n",eRes);
 		return eRes;
 	}
 	
 	eRes = L101_SetChannle(xInstPara->ucCh); //set channel
 	if(eRes != L101_AT_OK)
 	{
-		printf("set addr Fail [%d]\r\n",eRes);
+		printf("set addr Fail [%bu]\r\n",eRes);
 		return eRes;
 	}
 	
 	eRes = L101_SetFec(xInstPara->eFec); //set FEC
 	if(eRes != L101_AT_OK)
 	{
-		printf("set FEC Fail [%d]\r\n",eRes);
+		printf("set FEC Fail [%bu]\r\n",eRes);
 		return eRes;
 	}
 	eRes = L101_SetTxPower(xInstPara->ucPower); //set Tx Power
 	if(eRes != L101_AT_OK)
 	{
-		printf("set Power Fail [%d]\r\n",eRes);
+		printf("set Power Fail [%bu]\r\n",eRes);
 		return eRes;
 	}
 	
 	eRes = L101_ExitATMode(); //exit AT command mode, begin data transmmit
 	if(eRes != L101_AT_OK)
 	{
-		printf("exit AT mode fail [%d]\r\n",eRes);
+		printf("exit AT mode fail [%bu]\r\n",eRes);
 		return eRes;
 	}
 	return L101_AT_OK;

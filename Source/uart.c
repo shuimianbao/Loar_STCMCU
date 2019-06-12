@@ -1,10 +1,17 @@
 #include "type.h"
 
 bit busy = 0;
+/*
+bit s1busy = 0;
+bit s1recflag = 0;
+bit s2recflag = 0;
+uint8_t idata s1rec;
+uint8_t idata s2rec;
+*/
 bit bS2BufOverflow = 0;
-uint8_t xdata ucS2RecBuf[256];
-uint8_t xdata ucS2RecBufInP = 0;
-uint8_t xdata ucS2RecBufOutP = 0;
+uint8_t xdata ucS2RecBuf[S2RECBUFLEN];
+uint8_t idata ucS2RecBufInP;
+uint8_t idata ucS2RecBufOutP;
 void Init_Uart(void)
 {
 		// 7   6   5   4   3   2   1  0<input type="password" >
@@ -18,7 +25,9 @@ void Init_Uart(void)
     TR1 = 1;
     ES =0;										  //enable UART0 interrupt
 		TI = 1;
+	//ES =1;										  //enable UART0 interrupt
 }
+
 /*
 void SendChar(uint8_t c)
 {
@@ -34,24 +43,27 @@ void SendChar(uint8_t c)
 
 void uart_ISR(void) interrupt 4
 {
-	
+	//uint8_t idata tmpUart;
 	
 	if(TI)
 	{
-		UartSendFlag =1;
+		//UartSendFlag =1;
+		s1busy = 0;
 		TI =0;
 	}	
 	
 	if(RI)
 	{
-		tmpUart = SBUF;
-		UartRecFlag =1;	
+		s1rec = SBUF;
+		s1recflag =1;	
 		RI = 0;
 	}
 }
 */
+
 void Init_Uart2(void)
 {
+	ucS2RecBufOutP = ucS2RecBufInP = 0;
 	S2CON = 0X50;		//set UART2 mode as 8-bit variable baudrate, enable receive
 	BRT = BAUD(115200);
 	//AUXR1 |= 0X10;
@@ -77,11 +89,13 @@ void S2SendByte(uint8_t dat)
 void S2SendData(uint8_t *buf, uint8_t len)
 {
 	uint8_t i;
+	printf("send:");
 	for(i=0;i<len;i++)
 	{
 		S2SendByte(buf[i]);
 		printf("%c",buf[i]);
 	}
+	printf("\r\n");
 }
 
 uint8_t S2ReadData(uint8_t *buf,uint8_t delay)
@@ -89,15 +103,19 @@ uint8_t S2ReadData(uint8_t *buf,uint8_t delay)
 	uint8_t x,len=0;
 	while(delay--)
 		Delay10ms();
+	printf("read:");
 	if(bS2BufOverflow) //over flow
 	{
 		//Todo:...
+		bS2BufOverflow = 0;
 		printf("S2 Buffer overlfow\r\n");
 	}
-	len = (uint8_t)(((int8_t)ucS2RecBufInP + 256 - (int8_t)ucS2RecBufOutP) % 256);
+	len = (uint8_t)(((uint16_t)ucS2RecBufInP + 256 - (uint16_t)ucS2RecBufOutP) % 256);
 	buf = ucS2RecBuf + ucS2RecBufOutP;
 	ucS2RecBufOutP += len;
-	
+	printf("len: %bu,",ucS2RecBufInP);
+	printf("%bu,",ucS2RecBufOutP);
+	printf("%bu\r\n",len);
 	if(len)
 	{
 		for(x=0;x<len;x++)
@@ -110,23 +128,48 @@ uint8_t S2ReadData(uint8_t *buf,uint8_t delay)
 /*----------------------------
 UART2 interrupt service routine
 ----------------------------*/
+
 void Uart2(void) interrupt 8
 {
 	//uint8_t temp;
     if (S2CON & S2RI)
     {
         S2CON &= ~S2RI;     //Clear receive interrupt flag
-        ucS2RecBuf[ucS2RecBufInP++] = S2BUF;         //put UART data in buf
-				if(ucS2RecBufInP == ucS2RecBufOutP)
-							bS2BufOverflow = 1;	//buf over flow
+        ucS2RecBuf[ucS2RecBufInP] = S2BUF;         //put UART data in buf
+        ucS2RecBufInP++;
+		
+		if(ucS2RecBufInP == ucS2RecBufOutP)
+			bS2BufOverflow = 1;	//buf over flow
 				
-				//printf("%c",temp);
-				LED1 =~LED1;
+		//printf("%c",temp);
+		LED1 =~LED1;
     }
+	
     if (S2CON & S2TI)
     {
         S2CON &= ~S2TI;     //Clear transmit interrupt flag
         busy = 0;           //Clear transmit busy flag
-				LED2 =~LED2;
+		LED2 =~LED2;
     }
 }
+/*
+	void Uart2(void) interrupt 8
+	{
+		uint8_t idata temp;
+		if (S2CON & S2RI)
+		{
+			S2CON &= ~S2RI; 	//Clear receive interrupt flag
+			
+			s2rec = S2BUF;
+			s2recflag = 1;
+			LED1 =~LED1;
+		}
+		
+		if (S2CON & S2TI)
+		{
+			S2CON &= ~S2TI; 	//Clear transmit interrupt flag
+			busy = 0;			//Clear transmit busy flag
+			LED2 =~LED2;
+		}
+	}
+*/
