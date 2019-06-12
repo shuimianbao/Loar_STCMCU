@@ -15,6 +15,6 @@ void SendChar(unsigned char c);
 void Init_Uart2(void);
 void S2SendByte(unsigned char dat);
 void S2SendData(unsigned char *buf, unsigned char len);
-uint8_t S2ReadData(uint8_t *buf, uint8_t delay);
+uint8_t S2ReadData(uint8_t xdata *buf, uint8_t delay);
 
 #endif /*_UART_H_*/

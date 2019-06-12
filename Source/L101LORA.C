@@ -21,15 +21,46 @@ void L101_Reload(void)
 	L101RELOADOFF;
 }
 
-L101ATSTA L101_ATResoponSearch(const uint8_t *pucStr, uint8_t *pucBuf, uint8_t ucBuflen)
+L101ATSTA L101_ATResoponSearch(const uint8_t *pucStr, uint8_t xdata *pucBuf, uint8_t ucBuflen)
 {
-	uint8_t ucStrlen, *pucIndex,x;
+	uint8_t ucStrlen, *pucIndex,x,y,index;
+	uint8_t xdata *pucDest;
 	ucStrlen = strlen(pucStr);
+	printf("R0 %bu %bu\r\n",ucStrlen,ucBuflen);
 	if(ucStrlen > ucBuflen)
 		return L101_AT_E6;
-
 	
-
+	for(x=0; x<ucBuflen;x++)
+			printf("%c",pucBuf[x]);
+	
+	index = pucBuf - ucS2RecBuf; //get the array index
+	printf("index %bu\r\n",index);
+	for (x = 0; (x < ucBuflen) && ((ucBuflen - x)>=ucStrlen); x++)
+	{
+		printf("index2 %bu\r\n",(index+x)%S2RECBUFLEN);
+		printf("R1 %c %c\r\n",ucS2RecBuf[(index+x)%S2RECBUFLEN],pucStr[0]);
+		if(ucS2RecBuf[(index+x)%S2RECBUFLEN]==pucStr[0])//find the first character
+		{
+			pucDest = pucStr +1;
+			y=1;
+			while(pucDest)
+			{
+				
+				printf("R2 %c %c\r\n",ucS2RecBuf[(index+x+y)%S2RECBUFLEN],*pucDest);
+				if(*pucDest == ucS2RecBuf[(index+x+y)%S2RECBUFLEN])//countiue find character
+				{
+					y++;
+					pucDest++;
+				}
+				else
+					break; //break when character is different
+			}
+			if(pucBuf == 0) //find the string
+				return L101_AT_OK;
+		}
+	}
+	return L101_AT_E6;
+/*	
 	printf("1");
 	pucIndex = strstr(pucBuf,pucStr);
 	printf("2");
@@ -47,7 +78,7 @@ L101ATSTA L101_ATResoponSearch(const uint8_t *pucStr, uint8_t *pucBuf, uint8_t u
 		return L101_AT_E6;
 	}
 	
-	
+*/	
 }
 
 L101ATSTA L101_EnterATMode(void)
@@ -393,10 +424,11 @@ L101ATSTA L101_SetTxPower(uint8_t ucPa)
 }
 L101ATSTA L101_ReadWelcome(void)
 {
-	uint8_t *pucRec;
-	uint8_t ucLenRec;
+	uint8_t xdata *pucRec=0;
+	uint8_t ucLenRec,x;
 	uint8_t trycnt=MAXTRY;
-		
+	printf("A1 0x%x ",pucRec);
+	printf(" 0x%x\r\n",&pucRec);
 	do{
 		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY*5);//delay 10ms before read
 		if(ucLenRec)
@@ -408,7 +440,12 @@ L101ATSTA L101_ReadWelcome(void)
 		printf("S2 E14\r\n");
 		return L101_AT_E6;
 	}
-
+	
+	printf("A2 0x%x",pucRec);
+	printf(" 0x%x\r\n",&pucRec);
+	
+	for(x=0;x<ucLenRec;x++)
+			printf("%c",pucRec[x]);
 	return L101_ATResoponSearch("LoRa Start!",pucRec,ucLenRec);
 }
 

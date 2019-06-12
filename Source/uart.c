@@ -98,11 +98,14 @@ void S2SendData(uint8_t *buf, uint8_t len)
 	printf("\r\n");
 }
 
-uint8_t S2ReadData(uint8_t *buf,uint8_t delay)
+uint8_t S2ReadData(uint8_t xdata *buf,uint8_t delay)
 {
 	uint8_t x,len=0;
 	while(delay--)
 		Delay10ms();
+	printf("bufs 0x%x",buf);
+	printf(" 0x%x\r\n",&buf);
+	
 	printf("read:");
 	if(bS2BufOverflow) //over flow
 	{
@@ -116,6 +119,11 @@ uint8_t S2ReadData(uint8_t *buf,uint8_t delay)
 	printf("len: %bu,",ucS2RecBufInP);
 	printf("%bu,",ucS2RecBufOutP);
 	printf("%bu\r\n",len);
+	
+	printf("buf 0x%x",ucS2RecBuf);
+	printf(" 0x%x\r\n",&ucS2RecBuf);
+	printf(" 0x%x",buf);
+	printf(" 0x%x\r\n",&buf);
 	if(len)
 	{
 		for(x=0;x<len;x++)
