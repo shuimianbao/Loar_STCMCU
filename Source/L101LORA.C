@@ -91,7 +91,8 @@ L101ATSTA L101_EnterATMode(void)
 	S2SendData("+++",3);
 	
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -114,7 +115,8 @@ L101ATSTA L101_EnterATMode(void)
 	}
 
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -143,7 +145,8 @@ L101ATSTA L101_ExitATMode(void)
 	S2SendData("AT+ENTM\r\n",9);
 	
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -174,7 +177,8 @@ L101ATSTA L101_SetEcho(ENABLE en)
 		S2SendData("AT+E=OFF\r\n",10);
 
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -204,7 +208,8 @@ L101ATSTA L101_ReadModuleId(uint32_t *ulId)
 	S2SendData("AT+NID\r\n",8);
 
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -236,7 +241,8 @@ L101ATSTA L101_ReadModuleVer(void)
 	S2SendData("AT+VER\r\n",8);
 
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -270,7 +276,8 @@ L101ATSTA L101_SetWorkMode(L101_WROKMODE eMode)
 		S2SendData("AT+WMODE=FP\r\n",13);
 
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -297,7 +304,8 @@ L101ATSTA L101_SetRate(L101_RATE eRate)
 	S2SendData(ucTmpBuf,ucTmpLen);
 
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -325,7 +333,8 @@ L101ATSTA L101_SetAddress(uint16_t usAddr)
 	S2SendData(ucTmpBuf,ucTmpLen);
 
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -353,7 +362,8 @@ L101ATSTA L101_SetChannle(uint8_t ucCh)
 	S2SendData(ucTmpBuf,ucTmpLen);
 
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -381,7 +391,8 @@ L101ATSTA L101_SetFec(ENABLE eEn)
 	S2SendData(ucTmpBuf,ucTmpLen);
 
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read		
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -409,7 +420,8 @@ L101ATSTA L101_SetTxPower(uint8_t ucPa)
 	S2SendData(ucTmpBuf,ucTmpLen);
 
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -430,7 +442,8 @@ L101ATSTA L101_ReadWelcome(void)
 	printf("A1 0x%x ",pucRec);
 	printf(" 0x%x\r\n",&pucRec);
 	do{
-		ucLenRec = S2ReadData(pucRec,AT_READ_DELAY*5);//delay 10ms before read
+		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY*5);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY*5);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -561,11 +574,15 @@ L101ATSTA L101_SendWithFPMode(uint8_t *pucSendbuf,uint8_t ucLen,uint8_t ucCh, ui
 uint8_t L101_Receive(uint8_t *pucRecbuf)
 {
 	uint8_t ucTmplen = 0;
+	uint8_t ucTmplen1 = 0;
+	//ucTmplen = S2ReadData(pucRecbuf, 1);
+	pucRecbuf = S2ReadData(&ucTmplen,AT_READ_DELAY);//delay 10ms before read
 
-	ucTmplen = S2ReadData(pucRecbuf, 1);
 	if(ucTmplen)//the uart begin receive data
 	{
-		ucTmplen += S2ReadData(pucRecbuf+ucTmplen, 3);//delay 30ms before read all the data,max data should less than 252
+		//ucTmplen += S2ReadData(pucRecbuf+ucTmplen, 3);//delay 30ms before read all the data,max data should less than 252
+		 //pucRecbuf+ucTmplen = S2ReadData(&ucTmplen1,AT_READ_DELAY*3);//delay 30ms before read
+		 ucTmplen += ucTmplen1;
 	}
 
 	return ucTmplen;

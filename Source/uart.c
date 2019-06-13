@@ -98,6 +98,7 @@ void S2SendData(uint8_t *buf, uint8_t len)
 	printf("\r\n");
 }
 
+/*
 uint8_t S2ReadData(uint8_t xdata *buf,uint8_t delay)
 {
 	uint8_t x,len=0;
@@ -133,6 +134,45 @@ uint8_t S2ReadData(uint8_t xdata *buf,uint8_t delay)
 	return len;
 	
 }
+*/
+uint8_t* S2ReadData(uint8_t     *buflen,uint8_t delay)
+{
+	uint8_t x;
+	uint8_t *buf;
+	*buflen = 0;
+	while(delay--)
+		Delay10ms();
+	printf("bufs 0x%x",buf);
+	printf(" 0x%x\r\n",&buf);
+		
+	printf("read:");
+	if(bS2BufOverflow) //over flow
+	{
+		//Todo:...
+		bS2BufOverflow = 0;
+		printf("S2 Buffer overlfow\r\n");
+	}
+	*buflen = (uint8_t)(((uint16_t)ucS2RecBufInP + 256 - (uint16_t)ucS2RecBufOutP) % 256);
+	buf = ucS2RecBuf + ucS2RecBufOutP;
+	ucS2RecBufOutP += *buflen;
+	printf("len: %bu,",ucS2RecBufInP);
+	printf("%bu,",ucS2RecBufOutP);
+	printf("%bu\r\n",*buflen);
+		
+	printf("buf 0x%x",ucS2RecBuf);
+	printf(" 0x%x\r\n",&ucS2RecBuf);
+	printf(" 0x%x",buf);
+	printf(" 0x%x\r\n",&buf);
+	if(*buflen)
+	{
+		for(x=0;x<*buflen;x++)
+			printf("%c",buf[x]);
+	}
+		
+	return buf;
+		
+}
+
 /*----------------------------
 UART2 interrupt service routine
 ----------------------------*/
