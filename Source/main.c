@@ -190,7 +190,7 @@ void main(void)
 		while(1);
 		//IAP_CONTR = 0x20;//reset from application code
 	}
-	
+	printf("Init Success\r\n");
 	usIdCrc = CalculatePacketCrc(xL101Inst.ulId);
 	printf("ID:%x,crc:%x\r\n",xL101Inst.ulId,usIdCrc);
 	

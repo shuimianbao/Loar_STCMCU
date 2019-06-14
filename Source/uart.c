@@ -142,10 +142,10 @@ uint8_t* S2ReadData(uint8_t     *buflen,uint8_t delay)
 	*buflen = 0;
 	while(delay--)
 		Delay10ms();
-	printf("bufs 0x%x",buf);
-	printf(" 0x%x\r\n",&buf);
+	//printf("bufs 0x%x",buf);
+	//printf(" 0x%x\r\n",&buf);
 		
-	printf("read:");
+	//printf("read:");
 	if(bS2BufOverflow) //over flow
 	{
 		//Todo:...
@@ -155,20 +155,21 @@ uint8_t* S2ReadData(uint8_t     *buflen,uint8_t delay)
 	*buflen = (uint8_t)(((uint16_t)ucS2RecBufInP + 256 - (uint16_t)ucS2RecBufOutP) % 256);
 	buf = ucS2RecBuf + ucS2RecBufOutP;
 	ucS2RecBufOutP += *buflen;
-	printf("len: %bu,",ucS2RecBufInP);
-	printf("%bu,",ucS2RecBufOutP);
-	printf("%bu\r\n",*buflen);
+	//printf("len: %bu,",ucS2RecBufInP);
+	//printf("%bu,",ucS2RecBufOutP);
+	//printf("%bu\r\n",*buflen);
 		
-	printf("buf 0x%x",ucS2RecBuf);
-	printf(" 0x%x\r\n",&ucS2RecBuf);
-	printf(" 0x%x",buf);
-	printf(" 0x%x\r\n",&buf);
+	//printf("buf 0x%x",ucS2RecBuf);
+	//printf(" 0x%x\r\n",&ucS2RecBuf);
+	//printf(" 0x%x",buf);
+	//printf(" 0x%x\r\n",&buf);
+	printf("Rec ");
 	if(*buflen)
 	{
 		for(x=0;x<*buflen;x++)
 			printf("%c",buf[x]);
 	}
-		
+	printf("\r\n");	
 	return buf;
 		
 }

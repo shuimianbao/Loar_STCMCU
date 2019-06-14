@@ -24,29 +24,32 @@ void L101_Reload(void)
 L101ATSTA L101_ATResoponSearch(const uint8_t *pucStr, uint8_t xdata *pucBuf, uint8_t ucBuflen)
 {
 	uint8_t ucStrlen, *pucIndex,x,y,index;
-	uint8_t xdata *pucDest;
+	uint8_t *pucDest;
 	ucStrlen = strlen(pucStr);
-	printf("R0 %bu %bu\r\n",ucStrlen,ucBuflen);
+	//printf("R0 %bu %bu\r\n",ucStrlen,ucBuflen);
 	if(ucStrlen > ucBuflen)
 		return L101_AT_E6;
-	
-	for(x=0; x<ucBuflen;x++)
-			printf("%c",pucBuf[x]);
+
+	//printf("Res ");
+	//for(x=0; x<ucBuflen;x++)
+	//		printf("%c",pucBuf[x]);
+	//printf("\r\n");
 	
 	index = pucBuf - ucS2RecBuf; //get the array index
-	printf("index %bu\r\n",index);
+	//printf("index %bu\r\n",index);
 	for (x = 0; (x < ucBuflen) && ((ucBuflen - x)>=ucStrlen); x++)
 	{
-		printf("index2 %bu\r\n",(index+x)%S2RECBUFLEN);
-		printf("R1 %c %c\r\n",ucS2RecBuf[(index+x)%S2RECBUFLEN],pucStr[0]);
+		//printf("index2 %bu\r\n",(index+x)%S2RECBUFLEN);
+		//printf("R1 %c %c\r\n",ucS2RecBuf[(index+x)%S2RECBUFLEN],pucStr[0]);
 		if(ucS2RecBuf[(index+x)%S2RECBUFLEN]==pucStr[0])//find the first character
 		{
 			pucDest = pucStr +1;
+			//printf("addr 0x%x, 0x%x\r\n",pucDest,pucStr);
 			y=1;
-			while(pucDest)
+			while(*pucDest)
 			{
-				
-				printf("R2 %c %c\r\n",ucS2RecBuf[(index+x+y)%S2RECBUFLEN],*pucDest);
+				//printf("addr1 0x%x\r\n",pucDest);
+				//printf("R2 %c %c\r\n",ucS2RecBuf[(index+x+y)%S2RECBUFLEN],*pucDest);
 				if(*pucDest == ucS2RecBuf[(index+x+y)%S2RECBUFLEN])//countiue find character
 				{
 					y++;
@@ -55,7 +58,7 @@ L101ATSTA L101_ATResoponSearch(const uint8_t *pucStr, uint8_t xdata *pucBuf, uin
 				else
 					break; //break when character is different
 			}
-			if(pucBuf == 0) //find the string
+			if(*pucDest == 0) //find the string
 				return L101_AT_OK;
 		}
 	}
@@ -114,6 +117,7 @@ L101ATSTA L101_EnterATMode(void)
 		return L101_AT_E6;
 	}
 
+	trycnt=MAXTRY;
 	do{
 		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
 		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
@@ -133,7 +137,7 @@ L101ATSTA L101_EnterATMode(void)
 	else
 		return L101_AT_E6;
 	*/
-	return L101_ATResoponSearch("+ok",pucRec,ucLenRec);
+	return L101_ATResoponSearch("+OK",pucRec,ucLenRec);
 }
 
 L101ATSTA L101_ExitATMode(void)
@@ -178,7 +182,7 @@ L101ATSTA L101_SetEcho(ENABLE en)
 
 	do{
 		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
-		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY*3);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -277,7 +281,7 @@ L101ATSTA L101_SetWorkMode(L101_WROKMODE eMode)
 
 	do{
 		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
-		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY*3);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -300,12 +304,12 @@ L101ATSTA L101_SetRate(L101_RATE eRate)
 	uint8_t  ucTmpLen;
 	uint8_t  trycnt=MAXTRY;
 
-	ucTmpLen = sprintf(ucTmpBuf,"AT+SPD=%u\r\n",eRate);
+	ucTmpLen = sprintf(ucTmpBuf,"AT+SPD=%bu\r\n",eRate);
 	S2SendData(ucTmpBuf,ucTmpLen);
 
 	do{
 		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
-		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY*3);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -334,7 +338,7 @@ L101ATSTA L101_SetAddress(uint16_t usAddr)
 
 	do{
 		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
-		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY*3);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -358,12 +362,12 @@ L101ATSTA L101_SetChannle(uint8_t ucCh)
 	uint8_t  ucTmpLen;
 	uint8_t  trycnt=MAXTRY;
 
-	ucTmpLen = sprintf(ucTmpBuf,"AT+CH=%u\r\n",ucCh);
+	ucTmpLen = sprintf(ucTmpBuf,"AT+CH=%bu\r\n",ucCh);
 	S2SendData(ucTmpBuf,ucTmpLen);
 
 	do{
 		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
-		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY*5);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -387,12 +391,12 @@ L101ATSTA L101_SetFec(ENABLE eEn)
 	uint8_t  ucTmpLen;
 	uint8_t  trycnt=MAXTRY;
 
-	ucTmpLen = sprintf(ucTmpBuf,"AT+CH=%s\r\n",eEn?"OFF":"ON");
+	ucTmpLen = sprintf(ucTmpBuf,"AT+FEC=%s\r\n",eEn?"OFF":"ON");
 	S2SendData(ucTmpBuf,ucTmpLen);
 
 	do{
 		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read		
-		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY*3);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -416,12 +420,12 @@ L101ATSTA L101_SetTxPower(uint8_t ucPa)
 	uint8_t  ucTmpLen;
 	uint8_t  trycnt=MAXTRY;
 
-	ucTmpLen = sprintf(ucTmpBuf,"AT+PWR=%u\r\n",ucPa);
+	ucTmpLen = sprintf(ucTmpBuf,"AT+PWR=%bu\r\n",ucPa);
 	S2SendData(ucTmpBuf,ucTmpLen);
 
 	do{
 		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY);//delay 10ms before read
-		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY);//delay 10ms before read
+		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY*3);//delay 10ms before read
 		if(ucLenRec)
 			break;
 	}while(--trycnt);
@@ -439,8 +443,8 @@ L101ATSTA L101_ReadWelcome(void)
 	uint8_t xdata *pucRec=0;
 	uint8_t ucLenRec,x;
 	uint8_t trycnt=MAXTRY;
-	printf("A1 0x%x ",pucRec);
-	printf(" 0x%x\r\n",&pucRec);
+	//printf("A1 0x%x ",pucRec);
+	//printf(" 0x%x\r\n",&pucRec);
 	do{
 		//ucLenRec = S2ReadData(pucRec,AT_READ_DELAY*5);//delay 10ms before read
 		pucRec = S2ReadData(&ucLenRec,AT_READ_DELAY*5);//delay 10ms before read
@@ -454,11 +458,11 @@ L101ATSTA L101_ReadWelcome(void)
 		return L101_AT_E6;
 	}
 	
-	printf("A2 0x%x",pucRec);
-	printf(" 0x%x\r\n",&pucRec);
+	//printf("A2 0x%x",pucRec);
+	//printf(" 0x%x\r\n",&pucRec);
 	
-	for(x=0;x<ucLenRec;x++)
-			printf("%c",pucRec[x]);
+	//for(x=0;x<ucLenRec;x++)
+	//		printf("%c",pucRec[x]);
 	return L101_ATResoponSearch("LoRa Start!",pucRec,ucLenRec);
 }
 
